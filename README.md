@@ -22,4 +22,4 @@ The platform audits AI subscriptions such as ChatGPT, Claude, Cursor, GitHub Cop
 
 ## Deployment
 
-Coming soon.
+Live Demo: https://spendlens-ai.vercel.app
