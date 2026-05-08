@@ -19,3 +19,25 @@
 - Build form state management
 - Add supported AI tools and pricing structure
 - Start implementing the audit logic
+## Day 2 — 2026-05-08
+
+**Hours worked:** 4
+
+**What I did:**
+- Refactored the audit form into reusable components
+- Added dynamic tool management functionality
+- Implemented localStorage persistence for form state
+- Created reusable data structures and TypeScript interfaces
+- Improved form scalability and UI consistency
+
+**What I learned:**
+- Learned better state management patterns in React
+- Explored reusable component architecture in Next.js
+
+**Blockers / what I'm stuck on:**
+- Still researching how to structure recommendation logic cleanly
+
+**Plan for tomorrow:**
+- Build the audit recommendation engine
+- Add pricing data structures
+- Generate dynamic savings calculations
