@@ -1,5 +1,6 @@
 "use client";
 
+import { generateAudit } from "../lib/auditEngine";
 import { useEffect, useState } from "react";
 // We go UP one level out of 'app' to find 'components' and 'data'
 import ToolCard from "../components/ToolCard";
@@ -18,7 +19,7 @@ export default function Home() {
 
   const [teamSize, setTeamSize] = useState(1);
   const [useCase, setUseCase] = useState("");
-
+  const [results, setResults] = useState<any[]>([]); 
   useEffect(() => {
     const savedData = localStorage.getItem("audit-form");
     if (savedData) {
@@ -70,6 +71,22 @@ export default function Home() {
     const updated = tools.filter((_, i) => i !== index);
     setTools(updated);
   };
+  const handleGenerateAudit = () => {
+
+    const auditResults = generateAudit(
+    tools,
+    teamSize
+  );
+
+  setResults(auditResults);
+};
+const totalMonthlySavings = results.reduce(
+  (acc, item) => acc + item.estimatedSavings,
+  0
+);
+
+const totalAnnualSavings =
+  totalMonthlySavings * 12;
 
   return (
     <main className="min-h-screen bg-black text-white">
@@ -138,11 +155,127 @@ export default function Home() {
             </select>
           </div>
 
-          <button className="mt-8 w-full bg-green-500 text-black py-4 rounded-xl font-bold hover:opacity-90">
-            Generate Audit
-          </button>
+          <button
+  onClick={handleGenerateAudit}
+  className="mt-8 w-full bg-green-500 text-black py-4 rounded-xl font-bold hover:opacity-90"
+>
+  Generate Audit
+</button>
         </div>
       </section>
+
+      {results.length > 0 && (
+
+  <section className="max-w-5xl mx-auto px-6 pb-20">
+
+    <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
+
+      <h2 className="text-4xl font-bold mb-2">
+        Audit Results
+      </h2>
+
+      <p className="text-zinc-400 mb-8">
+        Personalized optimization recommendations for your AI stack.
+      </p>
+      <div className="grid md:grid-cols-2 gap-6 mb-8">
+
+  <div className="bg-black rounded-2xl p-6 border border-zinc-800">
+    <p className="text-zinc-500">
+      Total Monthly Savings
+    </p>
+
+    <h3 className="text-5xl font-bold text-green-400 mt-2">
+      ${totalMonthlySavings}
+    </h3>
+  </div>
+
+  <div className="bg-black rounded-2xl p-6 border border-zinc-800">
+    <p className="text-zinc-500">
+      Total Annual Savings
+    </p>
+
+    <h3 className="text-5xl font-bold text-green-400 mt-2">
+      ${totalAnnualSavings}
+    </h3>
+  </div>
+
+</div>
+
+      <div className="space-y-6">
+
+        {results.map((result, index) => (
+
+          <div
+            key={index}
+            className="bg-black border border-zinc-800 rounded-2xl p-6"
+          >
+
+            <div className="flex justify-between items-start flex-wrap gap-4">
+
+              <div>
+                <h3 className="text-2xl font-semibold">
+                  {result.tool}
+                </h3>
+
+                <p className="text-zinc-400 mt-2 max-w-2xl">
+                  {result.reason}
+                </p>
+              </div>
+
+              <div className="text-right">
+                <p className="text-zinc-500 text-sm">
+                  Estimated Savings
+                </p>
+
+                <p className="text-3xl font-bold text-green-400">
+                  ${result.estimatedSavings}/mo
+                </p>
+              </div>
+
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-4 mt-6">
+
+              <div className="bg-zinc-900 rounded-xl p-4">
+                <p className="text-zinc-500 text-sm">
+                  Current Spend
+                </p>
+
+                <p className="text-xl font-semibold">
+                  ${result.currentSpend}
+                </p>
+              </div>
+
+              <div className="bg-zinc-900 rounded-xl p-4">
+                <p className="text-zinc-500 text-sm">
+                  Recommended Plan
+                </p>
+
+                <p className="text-xl font-semibold">
+                  {result.recommendedPlan}
+                </p>
+              </div>
+
+              <div className="bg-zinc-900 rounded-xl p-4">
+                <p className="text-zinc-500 text-sm">
+                  Annual Savings
+                </p>
+
+                <p className="text-xl font-semibold text-green-400">
+                  ${result.estimatedSavings * 12}
+                </p>
+              </div>
+
+            </div>
+
+          </div>
+        ))}
+      </div>
+
+    </div>
+
+  </section>
+)}
     </main>
   );
 }
