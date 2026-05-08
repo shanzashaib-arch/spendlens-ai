@@ -41,3 +41,25 @@
 - Build the audit recommendation engine
 - Add pricing data structures
 - Generate dynamic savings calculations
+## Day 3 — 2026-05-09
+
+**Hours worked:** 5
+
+**What I did:**
+- Built the first version of the audit recommendation engine
+- Added pricing data structures
+- Implemented savings calculation logic
+- Generated dynamic audit results UI
+- Added total monthly and annual savings calculations
+
+**What I learned:**
+- Learned how to separate business logic from UI components
+- Improved understanding of scalable frontend architecture
+
+**Blockers / what I'm stuck on:**
+- Recommendation logic still needs more realistic optimization rules
+
+**Plan for tomorrow:**
+- Improve audit intelligence
+- Add AI-generated summaries
+- Begin backend integration for report storage
