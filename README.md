@@ -14,11 +14,11 @@ The platform audits AI subscriptions such as ChatGPT, Claude, Cursor, GitHub Cop
 
 ## Features
 
-- AI spend audit form
-- Cost optimization recommendations
-- AI-generated summaries
-- Shareable audit reports
-- Lead capture system
+* **Intelligent Audit Engine:** Custom logic to analyze AI stack and recommend cheaper alternatives (e.g., Switching from Cursor to Copilot for small teams).
+* **AI Spend Audit Form:** Interactive form to capture tool details, plans, and team size.
+* **Real-time Savings Analytics:** Instant calculation of monthly and annual projected savings.
+* **Cost Optimization Recommendations:** Personalized tips to reduce burn rate.
+* **AI-Generated Summaries:** (Coming Soon) Detailed insights using LLMs.
 
 ## Deployment
 
