@@ -63,3 +63,25 @@
 - Improve audit intelligence
 - Add AI-generated summaries
 - Begin backend integration for report storage
+## Day 4 — 2026-05-10
+
+**Hours worked:** 6
+
+**What I did:**
+- Integrated OpenAI API for AI-generated audit summaries
+- Added backend API routes in Next.js
+- Set up Supabase database and lead storage
+- Built lead capture section for audit reports
+- Added graceful fallback handling for API failures
+
+**What I learned:**
+- Learned server-side API route handling in Next.js
+- Improved understanding of backend integration patterns
+
+**Blockers / what I'm stuck on:**
+- Need stronger validation and abuse protection for lead capture
+
+**Plan for tomorrow:**
+- Add shareable audit URLs
+- Improve result page polish
+- Add loading states and UX improvements
