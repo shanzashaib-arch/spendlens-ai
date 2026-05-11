@@ -85,3 +85,26 @@
 - Add shareable audit URLs
 - Improve result page polish
 - Add loading states and UX improvements
+## Day 5 — 2026-05-11
+
+**Hours worked:** 6
+
+**What I did:**
+- Added unique public audit report URLs
+- Implemented audit database persistence
+- Built dynamic public report pages
+- Added loading states and improved UX polish
+- Created shareable audit links with copy functionality
+- Added conditional messaging for high-savings and optimized stacks
+
+**What I learned:**
+- Learned dynamic route handling in Next.js App Router
+- Improved understanding of shareable SaaS workflows
+
+**Blockers / what I'm stuck on:**
+- Need better Open Graph metadata support for shared links
+
+**Plan for tomorrow:**
+- Add tests and CI pipeline
+- Improve accessibility and performance
+- Finalize required markdown documentation
