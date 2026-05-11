@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 export default function Home() {
-  const [tools, setTools] = useState<any[]>([]);
+  const [tools, setTools] = useState<any>(null);
 
   useEffect(() => {
     const savedData = localStorage.getItem("audit-draft");
