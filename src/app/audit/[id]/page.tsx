@@ -1,107 +1,58 @@
-import { supabase } from "../../../lib/supabase";
+import { generateAudit } from "@/lib/auditEngine";
+import Link from "next/link";
 
-// Yeh function database se audit ka data lata hai
-async function getAudit(id: string) {
-  const { data } = await supabase
-    .from("audits")
-    .select("*")
-    .eq("public_id", id)
-    .single();
-
-  return data;
+// Ye function server-side par data fetch karne ke liye hai
+async function getAuditData(id: string) {
+  // Real apps mein yahan Supabase fetch hota hai
+  // For now, hum dummy data return kar rahe hain agar real na mile
+  return {
+    tools: [
+      { tool: "Claude", plan: "Business", monthlySpend: 60, seats: 2 },
+      { tool: "ChatGPT", plan: "Team", monthlySpend: 100, seats: 2 }
+    ],
+    teamSize: 2
+  };
 }
 
-export default async function AuditPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  // Params ko await karna Next.js 15+ ke liye zaroori hai
-  const { id } = await params;
-  const audit = await getAudit(id);
-
-  if (!audit) {
-    return (
-      <main className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-2">Audit Not Found</h1>
-          <p className="text-zinc-500">This report link is invalid or has been removed.</p>
-        </div>
-      </main>
-    );
-  }
+export default async function AuditResultPage({ params }: { params: { id: string } }) {
+  const data = await getAuditData(params.id);
+  const results = generateAudit(data.tools, data.teamSize);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-black to-zinc-950 text-white">
-      <section className="max-w-5xl mx-auto px-6 py-20">
-        
-        <div className="mb-12">
-          <p className="text-green-400 text-sm mb-3 tracking-widest font-bold">
-            PUBLIC AUDIT REPORT
-          </p>
-          <h1 className="text-5xl font-bold">AI Spend Audit</h1>
-          <p className="text-zinc-400 mt-6 font-medium">Estimated Monthly Savings</p>
-          <h2 className="text-7xl font-bold text-green-400 mt-2">
-            ${audit.total_savings}
-          </h2>
+    <main className="min-h-screen bg-black text-white p-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex justify-between items-center mb-10">
+          <h1 className="text-4xl font-extrabold text-blue-500">Audit Results</h1>
+          <Link href="/audit/new" className="text-gray-400 hover:text-white border border-gray-700 px-4 py-2 rounded-lg">
+            ← New Audit
+          </Link>
         </div>
 
-        {/* Logic for High Savings or Efficient Stack */}
-        <div className="mb-10">
-          {audit.total_savings > 500 ? (
-            <div className="bg-green-500 text-black rounded-2xl p-8 shadow-lg shadow-green-500/20">
-              <h3 className="text-3xl font-bold mb-2 text-black">Significant Savings Opportunity</h3>
-              <p className="text-lg font-medium opacity-90 text-black">
-                Your organization may benefit from discounted AI infrastructure credits.
-              </p>
-            </div>
-          ) : audit.total_savings < 100 && (
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8">
-              <h3 className="text-2xl font-bold mb-2">Stack Already Optimized</h3>
-              <p className="text-zinc-400">
-                Your current configuration appears relatively efficient.
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Breakdown List */}
-        <div className="space-y-6">
-          <h3 className="text-xl font-semibold text-zinc-500 mb-4 uppercase tracking-wider">Breakdown by Tool</h3>
-          {audit.audit_data.map((item: any, index: number) => (
-            <div
-              key={index}
-              className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 hover:border-zinc-700 transition-all duration-200"
-            >
-              <div className="flex justify-between items-start flex-wrap gap-4">
-                <div className="flex-1">
-                  <h3 className="text-2xl font-semibold text-white">
-                    {item.tool}
-                  </h3>
-                  <p className="text-zinc-400 mt-2 max-w-2xl leading-relaxed">
-                    {item.reason}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-zinc-500 text-sm uppercase font-bold">Savings</p>
-                  <p className="text-4xl font-bold text-green-400">
-                    ${item.estimatedSavings}
-                  </p>
-                </div>
+        <div className="grid gap-6">
+          {results.map((res, index) => (
+            <div key={index} className="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl">
+              <div className="flex justify-between items-start mb-4">
+                <h3 className="text-2xl font-bold">{res.tool}</h3>
+                <span className="bg-green-500/10 text-green-500 px-3 py-1 rounded-full text-sm font-mono">
+                  Save ${res.estimatedSavings}/mo
+                </span>
+              </div>
+              <p className="text-gray-400 mb-4">{res.reason}</p>
+              <div className="bg-black/50 p-4 rounded-xl border border-blue-900/30">
+                <span className="text-blue-400 font-medium">Recommendation: </span>
+                <span className="text-white">{res.recommendedPlan}</span>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Footer for Public Visitors */}
-        <div className="mt-20 pt-10 border-t border-zinc-800 text-center">
-          <p className="text-zinc-500 mb-4">Analyze your own AI stack costs.</p>
-          <a href="/" className="inline-block bg-white text-black px-8 py-3 rounded-xl font-bold hover:bg-zinc-200 transition-all duration-200">
-            Run Free Audit
-          </a>
+        <div className="mt-12 p-8 bg-gradient-to-br from-blue-900/20 to-transparent border border-blue-500/20 rounded-3xl text-center">
+          <h2 className="text-2xl font-bold mb-2">Total Monthly Potential Savings</h2>
+          <p className="text-5xl font-black text-blue-500">
+            ${results.reduce((acc, curr) => acc + curr.estimatedSavings, 0)}
+          </p>
         </div>
-
-      </section>
+      </div>
     </main>
   );
 }

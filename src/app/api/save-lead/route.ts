@@ -1,39 +1,20 @@
-import { supabase } from "../../../lib/supabase";
+import { NextResponse } from "next/server";
+import { supabase } from "@/lib/supabase";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+    const { email, auditData } = body;
 
-    const {
-      email,
-      company,
-      role,
-      teamSize,
-      auditData,
-    } = body;
-
-    // Supabase mein data insert kar rahe hain
-    const { error } = await supabase
+    const { data, error: dbError } = await supabase
       .from("leads")
-      .insert([
-        {
-          email,
-          company,
-          role,
-          team_size: teamSize, // Make sure table mein column name team_size hi ho
-          audit_data: auditData, // Make sure table mein column name audit_data hi ho
-        },
-      ]);
+      .insert([{ email, audit_data: auditData }]);
 
-    if (error) {
-      console.error("Supabase Error:", error.message); // Ye error terminal mein dikhayega
-      return Response.json({ success: false, error: error.message }, { status: 500 });
-    }
+    if (dbError) throw dbError;
 
-    return Response.json({ success: true });
-
-  } catch (err: any) {
-    console.error("API Crash:", err.message);
-    return Response.json({ success: false, message: "Server error" }, { status: 500 });
+    return NextResponse.json({ success: true, data });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

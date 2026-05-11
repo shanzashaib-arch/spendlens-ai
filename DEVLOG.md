@@ -129,3 +129,23 @@
 - Add automated tests and CI workflow
 - Improve accessibility and Lighthouse scores
 - Finalize deployment QA before submission
+## Day 7 — 2026-05-13
+
+**Hours worked:** 6
+
+**What I did:**
+- Added automated tests for the audit engine
+- Configured GitHub Actions CI workflow
+- Improved accessibility and metadata
+- Performed Lighthouse optimization
+- Finalized documentation and README updates
+- Completed final QA testing before submission
+
+**What I learned:**
+- Learned the importance of testing and CI in production-quality applications
+
+**Blockers / what I'm stuck on:**
+- None. MVP submission completed successfully.
+
+**Plan for tomorrow:**
+- Submit the project and prepare for potential Round 2 interview discussions
