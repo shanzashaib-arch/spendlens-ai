@@ -23,3 +23,24 @@ The platform audits AI subscriptions such as ChatGPT, Claude, Cursor, GitHub Cop
 ## Deployment
 
 Live Demo: https://spendlens-ai.vercel.app
+
+## Screenshots
+
+Add screenshots here before submission.
+
+## Decisions
+
+### 1. Rule-based audit engine instead of AI-generated recommendations
+This improved transparency and reduced hallucination risks.
+
+### 2. Next.js App Router
+Enabled unified frontend and backend architecture.
+
+### 3. Supabase instead of custom backend
+Reduced infrastructure complexity during MVP development.
+
+### 4. Public shareable reports
+Improved virality and distribution potential.
+
+### 5. Tailwind CSS
+Allowed rapid UI iteration and consistency.
