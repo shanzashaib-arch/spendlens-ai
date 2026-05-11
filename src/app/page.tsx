@@ -2,7 +2,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
-export default function Home() {
+export default function Home()
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ {
   const [tools, setTools] = useState<any>(null);
 
   useEffect(() => {

@@ -1,5 +1,6 @@
 interface ToolCardProps {
   index: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   tool: any;
   toolOptions: string[];
   onChange: (
