@@ -48,19 +48,7 @@ Allowed rapid UI iteration and consistency.
 
 https://spendlens-ai.vercel.app
 
-## Screenshots
 
-### 1. Landing Page
-A modern, high-converting hero section that invites users to start their audit.
-![Landing Page](/screenshots/landing.png)
-
-### 2. Audit Input Form
-Simple and intuitive form where users select their tools, plans, and seat usage.
-![Audit Form](/screenshots/form.png)
-
-### 3. Comprehensive Audit Results
-Instant breakdown of potential savings, reasoning, and specific plan recommendations.
-![Audit Results](/screenshots/results.png)
 
 ## Local Setup
 

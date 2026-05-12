@@ -1,58 +1,112 @@
-import { generateAudit } from "@/lib/auditEngine";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase"; 
 
-// Ye function server-side par data fetch karne ke liye hai
-async function getAuditData(id: string) {
-  // Real apps mein yahan Supabase fetch hota hai
-  // For now, hum dummy data return kar rahe hain agar real na mile
-  return {
-    tools: [
-      { tool: "Claude", plan: "Business", monthlySpend: 60, seats: 2 },
-      { tool: "ChatGPT", plan: "Team", monthlySpend: 100, seats: 2 }
-    ],
-    teamSize: 2
-  };
-}
+export default function AuditResultPage({ params }: { params: any }) {
+  const [auditData, setAuditData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-export default async function AuditResultPage({ params }: { params: { id: string } }) {
-  const data = await getAuditData(params.id);
-  const results = generateAudit(data.tools, data.teamSize);
+  // Params ko handle karne ka safe tareeqa
+  const unwrappedParams = React.use(params) as { id: string };
+  const id = unwrappedParams?.id;
+
+  useEffect(() => {
+    async function fetchAudit() {
+      if (!id) return;
+      
+      try {
+        setLoading(true);
+        const { data, error: sbError } = await supabase
+          .from("audits") // Screenshot ke mutabiq small letters
+          .select("*")
+          .eq("public_id", id)
+          .single();
+
+        if (sbError) {
+          console.error("Supabase Error:", sbError);
+          setError(sbError.message);
+        } else {
+          setAuditData(data);
+        }
+      } catch (err) {
+        console.error("Fetch Error:", err);
+        setError("An unexpected error occurred");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchAudit();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center font-mono">
+        <div className="animate-pulse text-blue-500 text-xl">Loading Audit {id}...</div>
+      </div>
+    );
+  }
+
+  if (error || !auditData) {
+    return (
+      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6 text-center">
+        <h1 className="text-3xl font-bold mb-4 text-red-500">Audit Not Found</h1>
+        <p className="text-gray-400 mb-6 font-mono text-sm">{error || "No data exists for this ID."}</p>
+        <Link href="/audit/new" className="px-8 py-3 bg-blue-600 rounded-full font-bold">
+          Generate New Audit
+        </Link>
+      </div>
+    );
+  }
+
+  // Database se data mapping
+  const results = auditData.audit_data?.results || [];
+  const totalSavings = auditData.total_savings || 0;
 
   return (
-    <main className="min-h-screen bg-black text-white p-8">
+    <div className="min-h-screen bg-black text-white p-8 font-sans">
       <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-10">
-          <h1 className="text-4xl font-extrabold text-blue-500">Audit Results</h1>
-          <Link href="/audit/new" className="text-gray-400 hover:text-white border border-gray-700 px-4 py-2 rounded-lg">
+        <div className="flex justify-between items-center mb-12 border-b border-gray-800 pb-8">
+          <div>
+            <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">
+              Audit Results
+            </h1>
+            <p className="text-gray-500 mt-2 font-mono text-sm uppercase">ID: {id}</p>
+          </div>
+          <Link href="/audit/new" className="px-5 py-2.5 bg-gray-900 rounded-lg border border-gray-700 text-sm">
             ← New Audit
           </Link>
         </div>
 
-        <div className="grid gap-6">
-          {results.map((res, index) => (
-            <div key={index} className="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl">
-              <div className="flex justify-between items-start mb-4">
-                <h3 className="text-2xl font-bold">{res.tool}</h3>
-                <span className="bg-green-500/10 text-green-500 px-3 py-1 rounded-full text-sm font-mono">
-                  Save ${res.estimatedSavings}/mo
-                </span>
+        <div className="space-y-8">
+          {results.length > 0 ? (
+            results.map((res: any, index: number) => (
+              <div key={index} className="bg-gray-900/40 p-8 rounded-2xl border border-gray-800">
+                <div className="flex justify-between items-start mb-4">
+                  <h2 className="text-2xl font-bold">{res.toolName}</h2>
+                  <span className="text-green-400 font-bold">Save ${res.savings}/mo</span>
+                </div>
+                <p className="text-gray-400 mb-6">{res.analysis}</p>
+                <div className="p-4 bg-blue-900/10 rounded-xl border border-blue-900/20 text-sm italic text-blue-300">
+                  {res.recommendation}
+                </div>
               </div>
-              <p className="text-gray-400 mb-4">{res.reason}</p>
-              <div className="bg-black/50 p-4 rounded-xl border border-blue-900/30">
-                <span className="text-blue-400 font-medium">Recommendation: </span>
-                <span className="text-white">{res.recommendedPlan}</span>
-              </div>
+            ))
+          ) : (
+            <div className="p-10 text-center text-gray-500 border border-dashed border-gray-800 rounded-xl">
+              No results found in the audit data.
             </div>
-          ))}
-        </div>
+          )}
 
-        <div className="mt-12 p-8 bg-gradient-to-br from-blue-900/20 to-transparent border border-blue-500/20 rounded-3xl text-center">
-          <h2 className="text-2xl font-bold mb-2">Total Monthly Potential Savings</h2>
-          <p className="text-5xl font-black text-blue-500">
-            ${results.reduce((acc, curr) => acc + curr.estimatedSavings, 0)}
-          </p>
+          <div className="mt-12 p-10 bg-gradient-to-br from-blue-900/30 to-black rounded-3xl border border-blue-500/30 text-center shadow-2xl shadow-blue-500/10">
+            <h3 className="text-gray-400 uppercase text-sm font-bold mb-3 tracking-widest">Total Monthly Savings</h3>
+            <p className="text-7xl font-black text-blue-500">${totalSavings}</p>
+          </div>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

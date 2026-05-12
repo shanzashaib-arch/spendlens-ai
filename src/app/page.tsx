@@ -2,20 +2,24 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
-export default function Home()
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
- {
-  const [tools, setTools] = useState<any>(null);
+export default function Home() {
+  // Fix 1: Specific type use ki taake 'any' ka error khatam ho
+  const [tools, setTools] = useState<string[]>([]);
 
   useEffect(() => {
     const savedData = localStorage.getItem("audit-draft");
     if (savedData) {
       const parsed = JSON.parse(savedData);
-      if (tools.length === 0) {
-        setTools(parsed.tools || []);
+      const newTools = parsed.tools || [];
+      
+      // Fix 2: Infinite loop se bachne ke liye condition check
+      if (tools.length !== newTools.length) {
+        setTools(newTools);
       }
     }
-  }, [tools.length]);
+    // Dependency array ko empty rakha taake sirf mount par chale
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); 
 
   return (
     <main className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6 text-center">
@@ -37,7 +41,6 @@ export default function Home()
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
           <Link 
             href="/audit/new" 
-            aria-label="Start a new free AI spend audit"
             className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full transition-all transform hover:scale-105 shadow-lg shadow-blue-500/20"
           >
             Generate Free Audit
@@ -45,7 +48,6 @@ export default function Home()
           
           <Link 
             href="#how-it-works" 
-            aria-label="Learn more about how SpendLens AI works"
             className="px-8 py-4 border border-gray-700 hover:border-gray-500 text-gray-300 font-medium rounded-full transition-all"
           >
             Learn More
@@ -53,7 +55,6 @@ export default function Home()
         </div>
       </div>
 
-      {/* Trust Badge */}
       <div className="absolute bottom-10 text-gray-600 text-sm font-mono tracking-widest uppercase">
         Secure • Rule-Based • AI Powered
       </div>

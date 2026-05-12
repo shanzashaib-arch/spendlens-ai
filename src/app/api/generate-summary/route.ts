@@ -44,7 +44,7 @@ export async function POST(req: Request) {
         response.choices[0].message.content,
     });
 
-  } catch (error) {
+  } catch {
 
     return Response.json({
       summary:

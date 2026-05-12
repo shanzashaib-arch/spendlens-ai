@@ -12,7 +12,7 @@ export interface AuditResult {
   reason: string;
 }
 
-export function generateAudit(tools: ToolData[], teamSize: number): AuditResult[] {
+export function generateAudit(tools: ToolData[], _teamSize: number): AuditResult[] {
   return tools.map((item) => {
     let savings = 0;
     let recommendation = item.plan;
