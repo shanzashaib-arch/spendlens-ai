@@ -4,14 +4,20 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase"; 
 
-export default function AuditResultPage({ params }: { params: any }) {
+// 1. Ye interface lazmi add karein, is se 'unrecognized' ka error khatam ho jayega
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
+
+// 2. Yahan ': any' ko badal kar ': PageProps' kar dein
+export default function AuditResultPage({ params }: PageProps) {
+  // 3. React.use(params) bilkul sahi hai, ye error nahi dega
+  const resolvedParams = React.use(params);
+  const id = resolvedParams?.id;
+
   const [auditData, setAuditData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // Params ko handle karne ka safe tareeqa
-  const unwrappedParams = React.use(params) as { id: string };
-  const id = unwrappedParams?.id;
 
   useEffect(() => {
     async function fetchAudit() {
@@ -20,7 +26,7 @@ export default function AuditResultPage({ params }: { params: any }) {
       try {
         setLoading(true);
         const { data, error: sbError } = await supabase
-          .from("audits") // Screenshot ke mutabiq small letters
+          .from("audits")
           .select("*")
           .eq("public_id", id)
           .single();
@@ -42,10 +48,17 @@ export default function AuditResultPage({ params }: { params: any }) {
     fetchAudit();
   }, [id]);
 
+  const handleShare = () => {
+    if (typeof window !== "undefined") {
+      navigator.clipboard.writeText(window.location.href);
+      alert("Link copied to clipboard! ✅");
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center font-mono">
-        <div className="animate-pulse text-blue-500 text-xl">Loading Audit {id}...</div>
+        <div className="animate-pulse text-blue-500 text-xl">Loading report...</div>
       </div>
     );
   }
@@ -62,7 +75,6 @@ export default function AuditResultPage({ params }: { params: any }) {
     );
   }
 
-  // Database se data mapping
   const results = auditData.audit_data?.results || [];
   const totalSavings = auditData.total_savings || 0;
 
@@ -76,9 +88,14 @@ export default function AuditResultPage({ params }: { params: any }) {
             </h1>
             <p className="text-gray-500 mt-2 font-mono text-sm uppercase">ID: {id}</p>
           </div>
-          <Link href="/audit/new" className="px-5 py-2.5 bg-gray-900 rounded-lg border border-gray-700 text-sm">
-            ← New Audit
-          </Link>
+          <div className="flex gap-4">
+            <Link href="/audit/new" className="px-5 py-2.5 bg-gray-900 rounded-lg border border-gray-700 text-sm">
+              ← New Audit
+            </Link>
+            <button onClick={handleShare} className="px-5 py-2.5 bg-blue-600 rounded-lg text-sm font-semibold">
+              Share Report 🔗
+            </button>
+          </div>
         </div>
 
         <div className="space-y-8">
@@ -97,7 +114,7 @@ export default function AuditResultPage({ params }: { params: any }) {
             ))
           ) : (
             <div className="p-10 text-center text-gray-500 border border-dashed border-gray-800 rounded-xl">
-              No results found in the audit data.
+              No results found.
             </div>
           )}
 
